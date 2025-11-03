@@ -8,7 +8,7 @@ const app = express()
 // ✅ CORS setup
 app.use(
   cors({
-    origin: process.env.CLIENT_URL , // frontend origin (Vite dev server)
+    origin: process.env.CLIENT_URL || "*" , // frontend origin (Vite dev server)
     credentials: true, // allow cookies, JWT in cookies
   })
 );

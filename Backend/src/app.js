@@ -6,10 +6,15 @@ const postRoute = require('./routes/post.Routes')
 
 const app = express()
 // ✅ CORS setup
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  "http://localhost:5173",
+]
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "*" , // frontend origin (Vite dev server)
+    origin: allowedOrigins, // frontend origin (Vite dev server)
     credentials: true, // allow cookies, JWT in cookies
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   })
 );
 app.use(express.json())  // for parsing application/json

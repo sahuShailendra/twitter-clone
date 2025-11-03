@@ -12,7 +12,7 @@ function Feed() {
   useEffect(() => {
     const dummyPosts = [
       {
-        displayName: "Shailendra Sahu",
+        name: "Shailendra Sahu",
         username: "sks99sahu",
         verified: true,
         text: "Building my own Twitter clone with React + Tailwind 🔥",
@@ -22,7 +22,7 @@ function Feed() {
           "https://images.unsplash.com/photo-1503264116251-35a269479413?auto=format&fit=crop&w=800&q=80",
       },
       {
-        displayName: "Frontend Dev",
+        name: "Frontend Dev",
         username: "frontend_guy",
         verified: false,
         text: "TailwindCSS makes styling so easy! 💙 #ReactJS #Tailwind",
@@ -32,7 +32,7 @@ function Feed() {
           "https://images.unsplash.com/photo-1581276879432-15a43c55c1b6?auto=format&fit=crop&w=800&q=80",
       },
       {
-        displayName: "CodeWithJS",
+        name: "CodeWithJS",
         username: "js_coder",
         verified: true,
         text: "Just connected my MongoDB Atlas backend with the frontend! 🚀",
@@ -82,7 +82,7 @@ function Feed() {
         {posts.map((post, index) => (
           <Post
             key={index}
-            displayName={post.displayName}
+            displayName={post.name}
             username={post.username}
             verified={post.verified}
             text={post.text}

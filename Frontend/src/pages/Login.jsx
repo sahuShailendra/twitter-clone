@@ -2,10 +2,13 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import XIcon from "@mui/icons-material/X";
 import { Link, useNavigate } from "react-router-dom"
-import userAPI from "../api/userApi";
+import { currentUser } from "../store/actions/userAction";
+import { useDispatch, useSelector } from "react-redux";
 
 function Login() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.user);
   const {
     register,
     handleSubmit,
@@ -15,17 +18,16 @@ function Login() {
   // On Submit
   const onSubmit = async(data) => {
     console.log("Login Data:", data);
-    
-    try{
-      const response = await userAPI.loginUser(data);
-      console.log("Registration successful:", response);
-      if(response.data.success){
-        navigate("/");
-      }
-    }catch(err){
-      console.error("Registration failed:", err);
-    }
+    dispatch(currentUser(data))
   };
+
+  // Redirect if user is logged in
+  React.useEffect(() => {
+    if (user) {
+      console.log("User logged in, navigating to home:", user);
+      navigate("/");
+    }
+  }, [user]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-black text-white">

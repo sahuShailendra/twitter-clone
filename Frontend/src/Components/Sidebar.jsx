@@ -1,4 +1,5 @@
 import React from "react";
+import userAPI from "../api/userApi";
 import XIcon from "@mui/icons-material/X";
 import SidebarOption from "./SidebarOption";
 import HomeIcon from "@mui/icons-material/Home";
@@ -9,8 +10,16 @@ import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import { useNavigate } from "react-router-dom";
 
 function Sidebar() {
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    const response = userAPI.logoutUser();
+    console.log("Logout response:", response);
+    // Additional logout handling (e.g., redirect to login page) can be done here
+    navigate("/login");
+  }
   return (
     <div className="flex flex-col justify-between border-r border-gray-500 flex-[0.3] mt-5 px-5 h-screen text-black dark:text-white">
       {/* TOP SECTION */}
@@ -38,6 +47,18 @@ function Sidebar() {
           "
         >
           Post
+        </button>
+        {/* logoutbutton */}
+        <button
+          className="
+            bg-transparent border border-gray-500
+            text-white font-extrabold text-lg 
+            rounded-[30px] h-[50px] w-full mt-3
+            hover:bg-gray-600 transition-colors duration-150
+          "
+          onClick={() => handleLogout()}
+        >
+          Logout
         </button>
       </div>
 

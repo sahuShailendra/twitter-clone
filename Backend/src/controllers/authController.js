@@ -51,13 +51,15 @@ async function userRegister(req, res) {
 async function userLogin(req, res) {
   try {
     const { email, password } = req.body;
+    console.log("Login attempt:", password, email);
     if (!email || !password) {
       return res.status(400).json({
         success: false,
         message: "Email and password are required",
       });
-    }
 
+    }
+    //check user
     const user = await userModel.findOne({ email });
     if (!user) {
       return res.status(400).json({
@@ -65,13 +67,14 @@ async function userLogin(req, res) {
         message: "Email not found",
       });
     }
-
+    //check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({
         success: false,
         message: "Incorrect password",
       });
+      
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
@@ -88,12 +91,7 @@ async function userLogin(req, res) {
     res.status(200).json({
       success: true,
       message: "User logged in successfully",
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        username: user.username,
-      },
+      user: user,
     });
   } catch (error) {
     res

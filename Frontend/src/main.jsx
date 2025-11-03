@@ -7,7 +7,8 @@ import Feed from './Components/Feed.jsx'
 import Profile from './pages/Profile.jsx'
 import Login from './pages/Login.jsx'
 import Signup from './pages/Signup.jsx'
-
+import { Provider } from 'react-redux'
+import store from './store/store.jsx'
 
 const router = createBrowserRouter([
   {
@@ -35,5 +36,7 @@ const router = createBrowserRouter([
 ]);
 
 createRoot(document.getElementById('root')).render(
-  <RouterProvider router={router} />
+  <Provider store={store}>
+    <RouterProvider router={router} />
+  </Provider>
 )

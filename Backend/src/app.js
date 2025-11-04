@@ -11,13 +11,11 @@ const allowedOrigins = [
   "http://localhost:5173",
 ]
 app.use(
-  cors(
-  //   {
-  //   origin: allowedOrigins, // frontend origin (Vite dev server)
-  //   credentials: true, // allow cookies, JWT in cookies
-  //   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  // }
-)
+  cors({
+    origin: allowedOrigins, // frontend origin (Vite dev server)
+    credentials: true, // allow cookies, JWT in cookies
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  })
 );
 app.use(express.json())  // for parsing application/json
 app.use(cookieParser())  // for parsing cookies

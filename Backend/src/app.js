@@ -6,16 +6,17 @@ const postRoute = require('./routes/post.Routes')
 
 const app = express()
 // ✅ CORS setup
-// const allowedOrigins = [
-//   process.env.CLIENT_URL,
-//   'http://localhost:5173'  // Vite dev server URL
-// ]
+
 app.use(
   cors({
     origin: 'https://twitter-clone-peach-mu.vercel.app' , // frontend origin (Vite dev server)
-    credentials: true // allow cookies, JWT in cookies
+    credentials: true, // allow cookies, JWT in cookies
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    exposedHeaders: ['Set-Cookie']
   })
 );
+app.options('*', cors());
 app.use(express.json())  // for parsing application/json
 app.use(cookieParser())  // for parsing cookies
 

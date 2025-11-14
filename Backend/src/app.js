@@ -7,8 +7,7 @@ const postRoute = require('./routes/post.Routes')
 const app = express()
 // ✅ CORS setup
 const allowedOrigins = [
-  process.env.CLIENT_URL,
-  "http://localhost:5173",
+  process.env.CLIENT_URL
 ]
 app.use(
   cors({

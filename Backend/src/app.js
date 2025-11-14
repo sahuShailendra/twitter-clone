@@ -16,7 +16,7 @@ app.use(
     exposedHeaders: ['Set-Cookie']
   })
 );
-app.options('*', cors());
+// app.options('*', cors());
 app.use(express.json())  // for parsing application/json
 app.use(cookieParser())  // for parsing cookies
 

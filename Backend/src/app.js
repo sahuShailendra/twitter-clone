@@ -13,8 +13,7 @@ const app = express()
 app.use(
   cors({
     origin: 'https://twitter-clone-peach-mu.vercel.app' , // frontend origin (Vite dev server)
-    credentials: true, // allow cookies, JWT in cookies
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    credentials: true // allow cookies, JWT in cookies
   })
 );
 app.use(express.json())  // for parsing application/json

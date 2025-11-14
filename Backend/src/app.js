@@ -6,13 +6,13 @@ const postRoute = require('./routes/post.Routes')
 
 const app = express()
 // ✅ CORS setup
-const allowedOrigins = [
-  process.env.CLIENT_URL,
-  'http://localhost:5173'  // Vite dev server URL
-]
+// const allowedOrigins = [
+//   process.env.CLIENT_URL,
+//   'http://localhost:5173'  // Vite dev server URL
+// ]
 app.use(
   cors({
-    origin: allowedOrigins, // frontend origin (Vite dev server)
+    origin: 'https://twitter-clone-peach-mu.vercel.app' , // frontend origin (Vite dev server)
     credentials: true, // allow cookies, JWT in cookies
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   })

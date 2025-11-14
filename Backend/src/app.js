@@ -7,7 +7,8 @@ const postRoute = require('./routes/post.Routes')
 const app = express()
 // ✅ CORS setup
 const allowedOrigins = [
-  process.env.CLIENT_URL
+  process.env.CLIENT_URL,
+  'http://localhost:5173'  // Vite dev server URL
 ]
 app.use(
   cors({

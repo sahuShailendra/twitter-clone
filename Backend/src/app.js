@@ -9,11 +9,11 @@ const app = express()
 
 app.use(
   cors({
-    origin: 'https://twitter-clone-peach-mu.vercel.app' , // frontend origin (Vite dev server)
+    origin: [
+      'http://localhost:5173',
+      'https://twitter-clone-peach-mu.vercel.app'
+    ] , // frontend origin (Vite dev server)
     credentials: true, // allow cookies, JWT in cookies
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    exposedHeaders: ['Set-Cookie']
   })
 );
 // app.options('*', cors());
@@ -22,8 +22,8 @@ app.use(cookieParser())  // for parsing cookies
 
 // 🚀 Route Middlewares
 
-app.use('/auth', authRoute)
-app.use('/posts', postRoute)
+app.use('/api/auth', authRoute)
+app.use('/api/posts', postRoute)
 
 
 module.exports = app;

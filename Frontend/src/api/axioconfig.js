@@ -6,3 +6,7 @@ const API = axios.create({
 })
 
 export default API
+
+
+//.env example
+// VITE_API_BASE_URL=https://twitter-clone-tx31.onrender.com

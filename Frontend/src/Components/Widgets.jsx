@@ -4,9 +4,13 @@ import WhoToFollow from "./WhoToFollow";
 
 const Widgets = () => {
   return (
-    <div className="flex-[0.3]">
+    <div className="
+    flex-col items-center
+     h-screen 
+    text-black dark:text-white 
+">
       {/* Search Box */}
-      <div className="flex items-center bg-[#e6ecf0] p-2.5 rounded-full mt-2 ml-5">
+      <div className="flex w-full items-center bg-[#e6ecf0] p-2.5 rounded-full">
         <SearchIcon className="text-gray-500" />
         <input
           type="text"
@@ -16,7 +20,7 @@ const Widgets = () => {
       </div>
 
       {/* Widget Container */}
-      <div className="mt-4 ml-5 p-5 rounded-2xl">
+      <div className="mt-4 w-full rounded-2xl">
         < WhoToFollow />
       </div>
     </div>

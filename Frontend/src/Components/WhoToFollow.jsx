@@ -38,7 +38,7 @@ const [users, setUsers] = useState(
       {users.map((user, index) => (
         <div
           key={index}
-          className="flex justify-between items-center py-2 border-b border-[#2f3336] last:border-none"
+          className="flex justify-between items-center py-2"
         >
           <div className="flex items-center gap-2">
             <img

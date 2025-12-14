@@ -9,6 +9,7 @@ import Login from './pages/Login.jsx'
 import Signup from './pages/Signup.jsx'
 import { Provider } from 'react-redux'
 import store from './store/store.jsx'
+import ProtectedRoute from './Components/ProtectedRoute.jsx'
 
 const router = createBrowserRouter([
   {
@@ -17,11 +18,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Feed />,
+        element: <ProtectedRoute><Feed /></ProtectedRoute>,
       },
       {
-        path: "/profile",
-        element: <Profile />,
+        path: "/profile/:id",
+        element: <ProtectedRoute><Profile /></ProtectedRoute>,
       },
       {
         path: "/login",

@@ -1,9 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { setUser } from "./userSlice";
 
 const postSlice = createSlice({
   name: "posts",
   initialState: {
     posts: [],
+    userPosts: [],
     loading: false,
     error: null,
   },
@@ -11,14 +13,15 @@ const postSlice = createSlice({
     setPosts: (state, action) => {
       state.posts = action.payload;
     },
-    addPost: (state, action) => {
+    addUserPost: (state, action) => {
+      state.userPosts.unshift(action.payload);
       state.posts.unshift(action.payload); // add new post at top
     },
-    updatePost: (state, action) => {
-      const index = state.posts.findIndex((p) => p._id === action.payload._id);
-      if (index !== -1) state.posts[index] = action.payload;
+    setUserPosts: (state, action) => {
+      state.userPosts = action.payload;
     },
-    removePost: (state, action) => {
+    removeUserPost: (state, action) => {
+      state.userPosts = state.userPosts.filter((p) => p._id !== action.payload);
       state.posts = state.posts.filter((p) => p._id !== action.payload);
     },
     setLoading: (state, action) => {
@@ -30,7 +33,7 @@ const postSlice = createSlice({
   },
 });
 
-export const { setPosts, addPost, updatePost, removePost, setLoading, setError } =
+export const { setPosts, addUserPost, setUserPosts, removeUserPost, setLoading, setError } =
   postSlice.actions;
 
 export default postSlice.reducer;

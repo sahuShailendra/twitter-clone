@@ -2,57 +2,24 @@ import React, { useState, useEffect } from "react";
 import TweetBox from "./TweetBox";
 import Post from "./Post";
 import "./Feed.css";
+import { fetchPosts } from "../store/actions/postAction.jsx";
+import { useDispatch, useSelector } from "react-redux";
 
 // import FlipMove from "react-flip-move";
 
 function Feed() {
-    const [posts, setPosts] = useState([]);
-
-  // Dummy data for testing UI
+  const dispatch = useDispatch();
+  const allPosts = useSelector((state) => state.posts.posts);
+  // const [posts, setPosts] = useState(allPosts || []);
   useEffect(() => {
-    const dummyPosts = [
-      {
-        name: "Shailendra Sahu",
-        username: "sks99sahu",
-        verified: true,
-        text: "Building my own Twitter clone with React + Tailwind 🔥",
-        avatar:
-          "https://i.pravatar.cc/150?img=3",
-        image:
-          "https://images.unsplash.com/photo-1503264116251-35a269479413?auto=format&fit=crop&w=800&q=80",
-      },
-      {
-        name: "Frontend Dev",
-        username: "frontend_guy",
-        verified: false,
-        text: "TailwindCSS makes styling so easy! 💙 #ReactJS #Tailwind",
-        avatar:
-          "https://i.pravatar.cc/150?img=12",
-        image:
-          "https://images.unsplash.com/photo-1581276879432-15a43c55c1b6?auto=format&fit=crop&w=800&q=80",
-      },
-      {
-        name: "CodeWithJS",
-        username: "js_coder",
-        verified: true,
-        text: "Just connected my MongoDB Atlas backend with the frontend! 🚀",
-        avatar:
-          "https://i.pravatar.cc/150?img=22",
-        image:
-          "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80",
-      },
-    ];
-
-    setPosts(dummyPosts);
+    dispatch(fetchPosts());
   }, []);
-
-  
 
   return (
     <div
       className="
         flex-[0.4]
-        border-r
+        border
         border-gray-800
         min-w-fit
         overflow-y-scroll
@@ -79,15 +46,12 @@ function Feed() {
 
       {/* Posts List */}
       <div className="text-white">
-        {posts.map((post, index) => (
+        {allPosts?.map((post, index) => (
           <Post
-            key={index}
-            displayName={post.name}
-            username={post.username}
-            verified={post.verified}
-            text={post.text}
-            avatar={post.avatar}
-            image={post.image}
+            key={post._id || index}
+            user ={post.user}
+            text={post.content}
+            image={post.image?.url}
           />
         ))}
       </div>

@@ -1,6 +1,9 @@
 const userModel = require("../models/user.Model");
+const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { uploadImage, deleteImage } = require("../services/storage.service");
+const { v4: uuid } = require("uuid");
 
 // User Registration
 async function userRegister(req, res) {
@@ -57,7 +60,6 @@ async function userLogin(req, res) {
         success: false,
         message: "Email and password are required",
       });
-
     }
     //check user
     const user = await userModel.findOne({ email });
@@ -74,7 +76,6 @@ async function userLogin(req, res) {
         success: false,
         message: "Incorrect password",
       });
-      
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
@@ -126,18 +127,55 @@ async function userUpdate(req, res) {
     }
     //prevent email and password update
     if (req.body.password || req.body.email) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Cannot update email or password here",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Cannot update email or password here",
+      });
     }
     //update fields
-    const { name, username, bio, avater, banner } = req.body;
+    const { name, username, bio } = req.body;
+
+    //get existing user
+    const user = await userModel.findById(id);
+    let avaterUrl = user.avatar;
+    let bannerUrl = user.banner;
+
+    //handle avatar upload
+    if (req.files?.avatar) {
+      //delete existing avatar
+      if (user.avatar?.fileId) {
+        await deleteImage(user.avatar.fileId);
+      }
+      //upload new avatar
+      const uploadAvaterResult = await uploadImage(
+        req.files.avatar[0].buffer,
+        uuid()
+      );
+      avaterUrl = {
+        url: uploadAvaterResult.url,
+        fileId: uploadAvaterResult.fileId,
+      };
+    }
+    //handle banner upload
+    if (req.files?.banner) {
+      //delete existing banner
+      if (user.banner?.fileId) {
+        await deleteImage(user.banner.fileId);
+      }
+      //upload new banner
+      const uploadBannerResult = await uploadImage(
+        req.files.banner[0].buffer,
+        uuid()
+      );
+      bannerUrl = {
+        url: uploadBannerResult.url,
+        fileId: uploadBannerResult.fileId,
+      };
+    }
+
     const updatedUser = await userModel.findByIdAndUpdate(
       id,
-      { name, username, bio, avater, banner },
+      { name, username, bio, avatar: avaterUrl, banner: bannerUrl },
       { new: true }
     );
 
@@ -172,8 +210,57 @@ async function getMyProfile(req, res) {
 async function getUserProfile(req, res) {
   try {
     const { id } = req.params; //id from url
-    const user = await userModel.findById(id).select("-password");
-    if (!user) {
+    const loggedInUserId = req.user.id;
+    const user = await userModel.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(id) } },
+      {
+        $lookup: {
+          from: "posts",
+          localField: "_id",
+          foreignField: "user",
+          as: "userPosts",
+          pipeline: [{ $sort: { createdAt: -1 } }],
+        },
+      },
+      {
+        $lookup: {
+          from: "follows",
+          localField: "_id",
+          foreignField: "following",
+          as: "followers",
+        },
+      },
+      {
+        $lookup: {
+          from: "follows",
+          localField: "_id",
+          foreignField: "follower",
+          as: "following",
+        },
+      },
+      {
+        $addFields: {
+          followersCount: { $size: "$followers" },
+          followingCount: { $size: "$following" },
+          isFollowing: {
+            $in: [
+             new mongoose.Types.ObjectId(loggedInUserId),
+              "$followers.follower",
+            ],
+          },
+        },
+      },
+      {
+        $project: {
+          password: 0,
+          __v: 0,
+          followers: 0,
+          following: 0,
+          "posts.__v": 0,
+        },
+      },
+    ]);
+    if (!user.length) {
       return res
         .status(404)
         .json({ success: false, message: "User not found" });
@@ -204,7 +291,6 @@ async function getAllUsers(req, res) {
       .json({ success: false, message: "Server error", error: error.message });
   }
 }
-
 
 module.exports = {
   userRegister,

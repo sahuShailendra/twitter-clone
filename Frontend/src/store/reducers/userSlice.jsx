@@ -30,8 +30,35 @@ const userSlice = createSlice({
     removeuser: (state) => {
       state.user = null;
     },
+    removeOtherProfile: (state) => {
+      state.otherProfile = null;
+    },
+    removeError: (state) => {
+      state.error = null;
+    },
+    updateOtherProfileFollowState: (state, action) => {
+      const { isFollowing } = action.payload;
+
+      if (state.otherProfile) {
+        state.otherProfile.isFollowing = isFollowing;
+
+        // optional but correct counts update
+        state.otherProfile.followersCount += isFollowing ? 1 : -1;
+        state.user.followingCount += isFollowing ? 1 : -1;
+      }
+    },
   },
 });
 
 export default userSlice.reducer;
-export const { setAllUsers, setUser, setOtherProfile, setLoading, setError, removeuser } = userSlice.actions;
+export const {
+  setAllUsers,
+  setUser,
+  setOtherProfile,
+  setLoading,
+  setError,
+  removeuser,
+  removeOtherProfile,
+  removeError,
+  updateOtherProfileFollowState,
+} = userSlice.actions;

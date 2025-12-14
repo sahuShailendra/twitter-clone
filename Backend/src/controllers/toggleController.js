@@ -62,74 +62,112 @@ async function toggleLike(req, res) {
 //Toggle follow/unfollow a user
 async function toggleFollow(req, res) {
   const session = await mongoose.startSession();
-  try {
-    session.startTransaction();
-    const targetUserId = req.params.id; //id from url
-    const userId = req.user.id; //id from authmiddleware
 
+  try {
+    const userId = req.user.id;          // logged-in user
+    const targetUserId = req.params.id;  // profile being visited
+
+    // ❌ self-follow block (fast fail, DB hit bhi nahi hoga)
     if (userId === targetUserId) {
-      await session.abortTransaction();
-      session.endSession();
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "You cannot follow/unfollow yourself",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "You cannot follow yourself",
+      });
     }
-    //check if a follow already exists
+
+    // transaction start (counts + follow doc consistency)
+    session.startTransaction();
+
+    /**
+     * check karo pehle se follow hai ya nahi
+     * same transaction me run ho raha hai
+     */
     const existingFollow = await followModel
       .findOne({ follower: userId, following: targetUserId })
       .session(session);
 
-    //if exists, remove the follow (unfollow) and
+    let isFollowing;
+
     if (existingFollow) {
-      await followModel.findByIdAndDelete(existingFollow._id).session(session);
-      await userModel
-        .findByIdAndUpdate(userId, { $inc: { followingCount: -1 } })
-        .session(session);
-      await userModel
-        .findByIdAndUpdate(targetUserId, { $inc: { followerCount: -1 } })
-        .session(session);
-      await session.commitTransaction();
-      session.endSession();
-      return res.status(200).json({
-        success: true,
-        message: "User unfollowed successfully",
-      });
+      /** 
+       * UNFOLLOW FLOW
+       */
+
+      // follow relation delete
+      await followModel.deleteOne(
+        { _id: existingFollow._id },
+        { session }
+      );
+
+      // counts decrement
+      await userModel.findByIdAndUpdate(
+        userId,
+        { $inc: { followingCount: -1 } },
+        { session }
+      );
+
+      await userModel.findByIdAndUpdate(
+        targetUserId,
+        { $inc: { followerCount: -1 } },
+        { session }
+      );
+
+      isFollowing = false;
+    } else {
+      /**
+       * FOLLOW FLOW
+       */
+
+      // follow relation create
+      // unique index duplicate ko automatically block karega
+      await followModel.create(
+        [{ follower: userId, following: targetUserId }],
+        { session }
+      );
+
+      // counts increment
+      await userModel.findByIdAndUpdate(
+        userId,
+        { $inc: { followingCount: 1 } },
+        { session }
+      );
+
+      await userModel.findByIdAndUpdate(
+        targetUserId,
+        { $inc: { followerCount: 1 } },
+        { session }
+      );
+
+      isFollowing = true;
     }
 
-    //if not exists, create a new follow
-    await followModel.create(
-      [
-        { follower: userId, following: targetUserId }, //[] for session transaction compatibility
-      ],
-      { session }
-    );
-    await userModel
-      .findByIdAndUpdate(userId, { $inc: { followingCount: 1 } })
-      .session(session);
-    await userModel
-      .findByIdAndUpdate(targetUserId, { $inc: { followerCount: 1 } })
-      .session(session);
+    // if everything is Done → DB commit
     await session.commitTransaction();
-    session.endSession();
-    //response
-    res.status(200).json({
+
+    return res.status(200).json({
       success: true,
-      message: "User followed successfully",
+      isFollowing,        // for frontend 
+      targetUserId,
+      message: isFollowing ? "User followed" : "User unfollowed",
     });
 
-
   } catch (error) {
+    // koi bhi error → sab rollback
     await session.abortTransaction();
-    session.endSession();
-    res
-      .status(500)
-      .json({ success: false, message: "Server error", error: error.message });
+
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    });
   } finally {
+    // session ALWAYS close
     session.endSession();
   }
 }
 
 module.exports = { toggleLike, toggleFollow };
+
+/*
+
+*/ 

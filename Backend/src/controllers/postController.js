@@ -30,15 +30,19 @@ async function createPost(req, res) {
       content,
       image: imageUrl,
     });
+    // populate user details after creation
+    const populatedPost = await newPost.populate("user", "name username avater")
+    //increment post count in user model
     const totalPosts = await userModel.findByIdAndUpdate(
       userid,
       { $inc: { postCount: 1 } },
       { new: true }
     );
+
     //return response
     return res
       .status(201)
-      .json({ message: "Post created successfully", post: newPost, data: totalPosts, success: true });
+      .json({ message: "Post created successfully", post: populatedPost, success: true });
   } catch (err) {
     return res
       .status(500)
@@ -58,7 +62,7 @@ async function updatePost(req, res) {
       return res.status(404).json({ message: "Post not found", success: false });
     }
     //check if the user is the owner of the post
-    if (post.user.toString() !== userId) {
+    if (post.user.toString() !== userId) {         //toString() to compare string with ObjectId
       return res.status(403).json({ message: "Unauthorized", success: false });
     }
 
@@ -144,7 +148,7 @@ async function allPosts(req, res) {
     const posts = await postModel
       .find() // Fetch all posts
       .sort({ createdAt: -1 }) // Sort by creation date (newest first)
-      .populate("user", "name username avater") // Populate user details (name and username)
+      .populate("user", "name username avatar") // Populate user details (name and username)
       .lean(); // Convert Mongoose documents to plain JS objects
 
     res.status(200).json({
@@ -188,7 +192,6 @@ async function postsByUser(req, res) {
     const posts = await postModel
       .find({ user: userId }) // Fetch posts by user
       .sort({ createdAt: -1 }) // Sort by creation date (newest first)
-      .populate("user", "name username avater") // Populate user details (name and username)
       .lean(); // Convert Mongoose documents to plain JS objects
 
     // If no posts found, return an empty array with a message

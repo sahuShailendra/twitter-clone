@@ -1,13 +1,15 @@
 import React, { forwardRef } from "react";
-import Avatar from '@mui/material/Avatar';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import RepeatIcon from '@mui/icons-material/Repeat';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import PublishIcon from '@mui/icons-material/Publish';
+import Avatar from "./Avatar.jsx";
+import Username from "./Username.jsx";
 
 const Post = forwardRef(
-  ({ displayName, username, verified, text, image, avatar }, ref) => {
+  ({ text, image, user }, ref) => {
+    
     return (
       <div
         ref={ref}
@@ -15,7 +17,7 @@ const Post = forwardRef(
       >
         {/* Avatar */}
         <div className="p-5">
-          <Avatar src={avatar} />
+          <Avatar user={user} />
         </div>
 
         {/* Body */}
@@ -23,15 +25,7 @@ const Post = forwardRef(
           <div className="flex flex-col">
             {/* Header */}
             <div>
-              <h3 className="text-[15px] mb-1">
-                {displayName}{" "}
-                <span className="font-semibold text-sm text-gray-500">
-                  {verified && (
-                    <VerifiedIcon className="text-sky-500 text-[14px] inline-block align-middle" />
-                  )}{" "}
-                  @{username}
-                </span>
-              </h3>
+              <Username user={user} />
             </div>
 
             {/* Description */}

@@ -1,12 +1,15 @@
-import React,  { useRef, useState }  from "react";
+import React,  { use, useRef, useState }  from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { createPost } from "../store/actions/postAction";
 import ImageIcon from '@mui/icons-material/Image';
 import GifBoxIcon from '@mui/icons-material/GifBox';
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
+import { useSelector } from "react-redux";
+import Avatar from "./Avatar";
 
 function TweetBox() {
+  const user = useSelector((state) => state.user.user);
   const { register, handleSubmit, reset, setValue, watch } = useForm();
   const [preview, setPreview] = useState(null);
   const fileRef = useRef(null);
@@ -45,11 +48,7 @@ function TweetBox() {
       className="flex space-x-3 border-b border-gray-700 p-4"
     >
       {/* Avatar */}
-      <img
-        src="https://images.pexels.com/photos/6256065/pexels-photo-6256065.jpeg"
-        alt="avatar"
-        className="w-12 h-12 rounded-full"
-      />
+      <Avatar user={user} />
 
       {/* Input Area */}
       <div className="flex-1">

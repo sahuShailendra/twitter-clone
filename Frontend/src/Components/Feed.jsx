@@ -28,18 +28,7 @@ function Feed() {
       "
     >
       {/* Feed Header */}
-      <div
-        className="
-          sticky top-0 
-          bg-black 
-          z-50 
-          border-b 
-          border-gray-800 
-          px-5 py-4
-        "
-      >
-        <h2 className="text-xl font-extrabold text-white">Home</h2>
-      </div>
+      
 
       {/* TweetBox */}
       <TweetBox />

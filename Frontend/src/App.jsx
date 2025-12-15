@@ -3,7 +3,7 @@ import Sidebar from "./Components/Sidebar";
 import Feed from "./Components/Feed";
 import Widgets from "./Components/Widgets";
 import { Outlet } from "react-router-dom";
-import TopBar from "./Components/Topbar";
+import HeadBar from "./Components/HeadBar";
 
 function App() {
   const [showSidebar, setShowSidebar] = useState(false);
@@ -26,7 +26,7 @@ function App() {
       {/* ========== FEED ========== */}
       <div className="flex-1 md:w-[50%] border-x border-gray-800 overflow-y-auto scrollbar-hide ">
         {/* Mobile Top Bar */}
-        <TopBar
+        <HeadBar
           onMenuClick={() => setShowSidebar(true)}
           onSearchClick={() => setShowWidgets(true)}
         />

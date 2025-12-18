@@ -84,8 +84,8 @@ async function userLogin(req, res) {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false, // change to true in production
-      sameSite: "lax",
+      secure: true, // change to true in production
+      sameSite: "None", // change to 'None' in production
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
